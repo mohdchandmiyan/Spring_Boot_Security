@@ -4,15 +4,13 @@ WORKDIR /app
 
 COPY . .
 
-RUN sed -i 's/\r$//' gradlew
-RUN chmod +x gradlew
-RUN bash gradlew clean bootJar -x test
+RUN ./mvnw clean package -DskipTests || mvn clean package -DskipTests
 
 FROM eclipse-temurin:17-jre-focal
 
 WORKDIR /app
 
-COPY --from=builder /app/build/libs/*.jar app.jar
+COPY --from=builder /app/target/*.jar app.jar
 
 EXPOSE 8080
 
